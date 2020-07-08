@@ -1,9 +1,10 @@
 package br.com.alura.alurator;
 
-import java.lang.reflect.InvocationTargetException;
+import br.com.alura.alurator.protocolo.Request;
+import br.com.alura.alurator.reflexao.Reflexao;
 
 public class Alurator {
-	
+
 	private String pacoteBase;
 
 	public Alurator(String pacoteBase) {
@@ -12,23 +13,16 @@ public class Alurator {
 
 	public Object executa(String url) {
 
-		String[] split = url.replaceFirst("/", "").split("/");
+		Request request = new Request(url);
 
-		String nomeController = Character.toUpperCase(split[0].charAt(0)) + split[0].substring(1) + "Controller";
+		String nomeControle = request.getNomeControle();
 
-		try {
-			Class<?> classController = Class.forName(pacoteBase + nomeController);
-			
-			Object instanciaController = classController.getDeclaredConstructor().newInstance();			
-			System.out.println(instanciaController);
-			return null;
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | 
-				  NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		    throw new RuntimeException("Erro no construtor!", e.getTargetException());
-		}
+		Object instanciaControle = new Reflexao()
+				.refleteClasse(pacoteBase + nomeControle)
+				.getConstrutorPadrao()
+				.invoca();
+		System.out.println(instanciaControle);
+		
+		return null;
 	}
 }
