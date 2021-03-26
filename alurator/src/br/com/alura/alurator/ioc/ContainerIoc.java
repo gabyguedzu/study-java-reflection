@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ConversorIoc {
+public class ContainerIoc {
 
 	public Object getInstancia(Class<?> tipoFonte) throws NoSuchMethodException, SecurityException {
 		Stream<Constructor<?>> construtores = Stream.of(tipoFonte.getDeclaredConstructor());
