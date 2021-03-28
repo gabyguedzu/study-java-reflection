@@ -49,7 +49,26 @@ public class ContainerIoc {
 	}
 
 	public void registra(Class<?> tipoFonte, Class<?> tipoDestino) {
-		mapaDeTipos.put(tipoFonte, tipoDestino);
+
+	    boolean compativel = verificaCompatibilidade(tipoFonte, tipoDestino);
+
+	    if (!compativel) throw new ClassCastException("Não é possível resolver " + tipoFonte + " para " + tipoDestino);
+
+	    mapaDeTipos.put(tipoFonte, tipoDestino);
+
+	}
+	
+	private boolean verificaCompatibilidade(Class<?> tipoFonte, Class<?> tipoDestino) {
+	    boolean compativel;
+
+	    if (tipoFonte.isInterface() ) {
+	        compativel = Stream.of(tipoDestino.getInterfaces())
+	            .anyMatch(interfaceImplementada -> interfaceImplementada.equals(tipoFonte));
+	    } else {
+	        compativel = tipoDestino.getSuperclass().equals(tipoFonte)
+	                || tipoDestino.equals(tipoFonte);
+	    }
+	    return compativel;
 	}
 
 }
